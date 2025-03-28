@@ -14,6 +14,8 @@ def formatar_tempo(segundos):
 def main():
     # Inicializa a câmera
     cap = cv2.VideoCapture(0)
+    print("Câmera inicializada")
+    print("Inicializando câmera...")
     
     # Verifica se a câmera foi aberta corretamente
     if not cap.isOpened():
