@@ -1,9 +1,15 @@
 import cv2
 import numpy as np
 import mediapipe as mp
+import time
 
 def calcular_distancia(ponto1, ponto2):
     return np.sqrt((ponto1.x - ponto2.x)**2 + (ponto1.y - ponto2.y)**2)
+
+def formatar_tempo(segundos):
+    minutos = int(segundos // 60)
+    segundos = int(segundos % 60)
+    return f"{minutos:02d}:{segundos:02d}"
 
 def main():
     # Inicializa a câmera
@@ -35,6 +41,7 @@ def main():
     contador = 0
     mão_na_boca = False
     distancia_anterior = float('inf')
+    tempo_inicial = time.time()
     
     print("O programa vai contar quantas vezes você leva a mão à boca")
     print("Pressione 'k' para sair")
@@ -47,6 +54,11 @@ def main():
         if not ret:
             print("Erro ao capturar frame!")
             break
+        
+        # Calcula o tempo decorrido
+        tempo_atual = time.time()
+        tempo_decorrido = tempo_atual - tempo_inicial
+        tempo_formatado = formatar_tempo(tempo_decorrido)
         
         # Converte a imagem para RGB para o MediaPipe
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -87,15 +99,20 @@ def main():
                 
                 distancia_anterior = distancia
         
-        # Mostra o contador na tela
+        # Mostra o contador e o tempo na tela
         fonte = cv2.FONT_HERSHEY_SIMPLEX
-        texto = f"Contador: {contador}"
-        posicao = (50, 50)
+        texto_contador = f"Contador: {contador}"
+        texto_tempo = f"Tempo: {tempo_formatado}"
+        
+        # Posição e estilo do contador
+        posicao_contador = (50, 50)
+        posicao_tempo = (50, 100)
         escala = 1
         cor = (0, 255, 0)  # Verde
         espessura = 2
         
-        cv2.putText(frame, texto, posicao, fonte, escala, cor, espessura)
+        cv2.putText(frame, texto_contador, posicao_contador, fonte, escala, cor, espessura)
+        cv2.putText(frame, texto_tempo, posicao_tempo, fonte, escala, cor, espessura)
         
         # Mostra o frame
         cv2.imshow('Contador de Mão na Boca', frame)
